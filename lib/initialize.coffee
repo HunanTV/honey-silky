@@ -1,5 +1,11 @@
+require 'colors'
+require 'shelljs/global'
+
+#需要初始化helper
+require './compiler/handlebars/helper'
+
 module.exports = (options)->
-    require('./common').init(options)
+    require('./utils').init(options)
     require('./data').init()
-    require('./template').init()
-    require('./handlebarHelpers.coffee').init()
+#    require('./compiler/template').init()
+#    require('./compiler/handlebarHelpers').init()

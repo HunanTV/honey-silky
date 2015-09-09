@@ -23,6 +23,6 @@ projectFilesBackup
 *~
 *.swp
 *.swo
+samples/default/build
 samples/build
-undefined
-build
+samples/.silky/plugin

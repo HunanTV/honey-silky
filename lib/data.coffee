@@ -3,27 +3,28 @@
 ###
 _fs = require 'fs-extra'
 _path = require 'path'
-_common = require './common'
-_ = require 'underscore'
+_utils = require './utils'
+_ = require 'lodash'
 
-_isWatch = false        #是否在监控中
 _data = {
   json: {},
   less: {},
   language: {}
 }
 
+#读取单个语言文件
+readLanguageFile = (file)->
+  extname = _path.extname(file)
+  #目前只接受json的文件
+  return if extname isnt '.json'
+
+  key = getDataKey file
+  _data.language[key] = _fs.readJSONSync(file, 'utf-8')
+
 #读取语言文件
 readLanguage = (dir)->
   return if not _fs.existsSync dir
-  _fs.readdirSync(dir).forEach (filename)->
-    extname = _path.extname(filename)
-    #目前只接受json的文件
-    return if extname isnt '.json'
-
-    key = getDataKey filename
-    file = _path.join dir, filename
-    _data.language[key] = _fs.readJSONSync(file, 'utf-8')
+  _fs.readdirSync(dir).forEach (filename)-> readLanguageFile _path.join(dir, filename)
 
 #根据文件名获取key
 getDataKey = (file)->
@@ -33,29 +34,37 @@ getDataKey = (file)->
 readScript = (normalFile, overrideFile)->
   #normal中不存在的不处理
   return if not _fs.existsSync normalFile
+  delete require.cache[normalFile]
+
   normal = require normalFile
   #没有需要覆盖的文件
   return normal if not _fs.existsSync overrideFile
+  delete require.cache[overrideFile]
+
   override = require overrideFile
   _.extend normal, override
 
 #全并文件
-combineFile = (workbench, filename)->
+combineFile = (filename)->
   #只处理json和less的文件
   extname = _path.extname(filename).replace('.', '')
+  #提示用户，将不支持json格式的数据文件
+  console.log "警告：json格式的数据文件将不被新版本支持 - > #{filename}" if /^json$/.test extname
   return false if extname not in ['json', 'less', 'js']
 
   key = getDataKey filename
-  normaFile = _path.join workbench, 'normal', filename
-  overrideFile = _path.join workbench, _common.options.env, filename
+  normaFile = _path.join _utils.localSilkyIdentityDir(), 'data', 'normal', filename
+  overrideFile = _path.join _utils.localSilkyIdentityDir(), 'data', _utils.options.env, filename
 
   #如果是js文件，直接引入
-  return _data.json[key] = readScript(normaFile, overrideFile) if extname is 'js'
+  if extname is 'js'
+    content = readScript(normaFile, overrideFile)
+    return _data.json[key] = content
 
-  normalData = _common.readFile normaFile
+  normalData = _utils.readFile normaFile
   #取特殊环境将要覆盖的数据
   if _fs.existsSync overrideFile
-    overrideData = _common.readFile overrideFile
+    overrideData = _utils.readFile overrideFile
 
   #将数据存入
   if extname is 'json'
@@ -69,28 +78,28 @@ combineFile = (workbench, filename)->
 
 #入口
 exports.init = ()->
-  ops = _common.options
   #读取normal的数据
-  workspace = _path.join ops.workbench, ops.identity
+  normalDir = _path.join _utils.localSilkyIdentityDir(), 'data', 'normal'
+  #目录不存在，不查读取数据
+  return if not _fs.existsSync normalDir
+
   #循环读取所有数据到缓存中
-  _fs.readdirSync(_path.join workspace, 'normal').forEach (filename)->
-    combineFile workspace, filename
+  _fs.readdirSync(normalDir).forEach (filename)->
+    combineFile filename
 
   #循环读取所有语言到数据中
-  readLanguage _path.join(workspace, 'language', ops.language)
+  readLanguage _utils.languageDirectory()
+  #监控数据文件的变化
+  watch()
 
-#    暂时不watch，因为data文件一般改得少
-#    #监控数据目录中的json和less以及js是否发生的变化
-#    _common.watch workspace, /\.(json|less|js)$/i, (event, file)->
-#        extname = _path.extname(file).replace '.', ''
-#        #删除数据
-#        if event is 'delete'
-#            key = getDataKey file
-#            delete _data[extname][key]
-#        else
-#            #更新数据
-#            readData file
-#
-#        _common.onPageChanged()
+#监控文件的改变
+watch = ()->
+  dataDir = _path.join _utils.localSilkyIdentityDir(), 'data'
+  #监控数据文件的变化
+  _utils.watch dataDir, (f)-> combineFile _path.basename(f)
+
+  #监控语言文件的变化
+  langDir = _utils.languageDirectory()
+  _utils.watch langDir, (f)-> readLanguage f
 
 exports.whole = _data
