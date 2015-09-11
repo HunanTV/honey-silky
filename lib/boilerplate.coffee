@@ -12,7 +12,7 @@ _utils = require './utils'
 updateFromRepos = (cb)->
   #远程仓库地址
   remoteRepos = _utils.xPathMapValue('custom.boilerplateRepository', _utils.globalConfig)
-  remoteRepos = remoteRepos || 'https://github.com/wvv8oo/silky-boilerplate.git'
+  remoteRepos = remoteRepos || 'http://git.hunantv.com/honey-lab/silky-boilerplate.git'
 
   localRepos = _utils.globalCacheDirectory('boilerplate')
   _utils.updateGitRepos remoteRepos, localRepos, (code)-> cb code, localRepos
