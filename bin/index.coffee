@@ -34,7 +34,8 @@ init = (ops, loadPlugin)->
   #初始化
   _initialize options
   #检查silky是否有更新
-  _update.checkSilky _version if options.checkSilky
+  #honey-silky专版，不检查更新
+#  _update.checkSilky _version if options.checkSilky
   _update.checkConfig() if options.checkConfig
 
   #初始化插件模块
