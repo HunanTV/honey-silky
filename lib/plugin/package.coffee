@@ -104,7 +104,7 @@ installFromSpecificSource = (pluginName, pluginRootDir, source, registry, cb)->
 #从标准仓库中安装
 installFromStandardRepos = (names, pluginRootDir, repository, registry, cb)->
   repository = repository || _utils.xPathMapValue('custom.pluginRepository', _utils.globalConfig)
-  repository = repository || 'https://github.com/wvv8oo/silky-plugins.git'
+  repository = repository || 'http://git.hunantv.com/honey-lab/silky-plugins.git'
   localRepos = _path.join _utils.globalCacheDirectory(), 'plugins'
 
   #更新仓库
