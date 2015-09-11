@@ -1,6 +1,6 @@
 {
-  "name": "silky",
-  "version": "0.8.15",
+  "name": "honey-silky",
+  "version": "1.0.0",
   "dependencies": {
     "async": "0.8.0",
     "cheerio": "0.15.0",
@@ -28,13 +28,13 @@
     "uuid": "^2.0.1",
     "watch": "0.10.0"
   },
-  "homepage": "http://silky.wvv8oo.com",
+  "homepage": "blog.lab.hunantv.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wvv8oo/silky"
+    "url": "http://git.hunantv.com/honey-lab/honey-silky"
   },
   "bugs": {
-    "url": "https://github.com/wvv8oo/silky/issues"
+    "url": "http://git.hunantv.com/honey-lab/honey-silky/issues"
   },
   "main": "./lib/index.coffee",
   "bin": {
