@@ -8,6 +8,7 @@ _os = require 'os'
 _ = require 'lodash'
 _livereload = require 'livereload'
 require 'colors'
+_banner = require 'ascii-banner'
 
 _initialize = require '../lib/initialize'
 _utils = require '../lib/utils'
@@ -23,6 +24,7 @@ _version = require(_path.join(__dirname, '../package.json')).version
 
 console.log "Silky Version -> #{_version}"
 console.log "Silky Root -> #{_path.dirname __dirname}"
+_banner.write('honey').color('red').out()
 
 init = (ops, loadPlugin)->
   defaultOptions =

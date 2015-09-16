@@ -1,7 +1,8 @@
 {
   "name": "honey-silky",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
+    "ascii-banner": "0.0.2",
     "async": "0.8.0",
     "cheerio": "0.15.0",
     "clean-css": "^2.2.20",
